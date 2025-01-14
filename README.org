@@ -1,0 +1,8 @@
+#+TITLE: Generate Font variants automatically
+
+Generate Font variants automatically
+- bold
+- italic
+- bold italic
+
+
