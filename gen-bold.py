@@ -22,14 +22,14 @@ def generate_bold_sfd(input_path):
 
         # Update metadata for bold variant
         print("Updating font metadata for bold variant...")
-        font.fontname = font.fontname + "-Bold"
+        # removing "regular" from the font name, case insensitive
+        font.fontname = font.fontname.replace("-Regular", "").replace("-regular", "")
         font.familyname = font.familyname
         font.fullname = font.fullname + " Bold"
         font.weight = "Bold"
 
-        # Set OS/2 weight class to match bold
-        os2_table = font.os2
-        os2_table.weight = 700  # 700 is the standard value for "Bold"
+        # Set OS/2 weight class (directly via font.os2_weight)
+        font.os2_weight = 700  # 700 is the standard value for "Bold"
 
         # Update unique identifier
         font.appendSFNTName(
@@ -46,7 +46,7 @@ def generate_bold_sfd(input_path):
             if glyph.isWorthOutputting():
                 try:
                     glyph.correctDirection()  # Correct spline directions
-                    glyph.changeWeight(50)  # Apply weight change
+                    glyph.changeWeight(100)  # Apply weight change
                     print(f"Processed glyph: {glyph.glyphname}")
                 except Exception as e:
                     print(f"Error processing glyph '{glyph.glyphname}': {e}")
