@@ -3,13 +3,14 @@ import fontforge
 import os
 import sys
 
+
 def generate_bold_sfd(input_path):
     # Check if the input file exists
     if not os.path.isfile(input_path):
         print(f"Error: File '{input_path}' not found.")
         sys.exit(1)
 
-    # Generate the output path
+    # Generate the output paths
     input_dir, file_name = os.path.split(input_path)
     base_name, _ = os.path.splitext(file_name)
     output_sfd = os.path.join(input_dir, f"bold_{base_name}.sfd")
@@ -23,20 +24,22 @@ def generate_bold_sfd(input_path):
         print("Validating and repairing the font...")
         font.validate()
 
-        # Convert to cubic splines for reliable operations
-        print("Converting to cubic splines...")
-        font.selection.all()
-        font.changeToCubic()
-
-        # Apply bold effect
-        print("Applying bold effect...")
-        font.changeWeight(100, "auto", False)  # Adjust weight as needed
+        # Process each glyph individually to avoid infinite loops
+        print("Applying bold effect glyph by glyph...")
+        for glyph in font.glyphs():
+            if glyph.isWorthOutputting():
+                try:
+                    glyph.correctDirection()  # Correct spline directions
+                    glyph.changeWeight(30)  # Apply weight change
+                    print(f"Processed glyph: {glyph.glyphname}")
+                except Exception as e:
+                    print(f"Error processing glyph '{glyph.glyphname}': {e}")
 
         # Save the modified font as .sfd
         font.save(output_sfd)
         print(f"Bold SFD file generated: {output_sfd}")
 
-        # Optionally generate TTF for inspection
+        # Optionally generate a TTF for inspection
         font.generate(output_ttf)
         print(f"Bold TTF file generated: {output_ttf}")
 
@@ -45,5 +48,11 @@ def generate_bold_sfd(input_path):
         print(f"Error processing file '{input_path}': {e}")
         sys.exit(1)
 
+
 if __name__ == "__main__":
-    if len(sys.argv)
+    if len(sys.argv) != 2:
+        print("Usage: python generate_bold_sfd.py <font_file_path>")
+        sys.exit(1)
+
+    input_file = sys.argv[1]
+    generate_bold_sfd(input_file)
