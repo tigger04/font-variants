@@ -5,6 +5,9 @@ source ~/.qfuncs.sh
 
 set -e
 
-cd "$(dirname "$0")" || die
+# dereference in case of symlink
+real_path="$(realpath "$0")"
+real_dir="$(dirname "$real_path")"
+cd "$real_dir" || die
 . bin/activate
-python3 gen_font_variants.py "$@"
+gen-font-variants.py "$@"

@@ -14,8 +14,8 @@ def generate_bold_sfd(input_path):
     # Generate the output paths
     input_dir, file_name = os.path.split(input_path)
     base_name, _ = os.path.splitext(file_name)
-    output_sfd = os.path.join(input_dir, f"bold_{base_name}.sfd")
-    output_ttf = os.path.join(input_dir, f"bold_{base_name}.ttf")
+    output_sfd = os.path.join(input_dir, f"{base_name}-bold.sfd")
+    output_ttf = os.path.join(input_dir, f"{base_name}-bold.ttf")
 
     try:
         # Open the font
