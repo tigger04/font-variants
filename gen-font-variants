@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+#shellcheck source=../../../.qfuncs.sh
+source ~/.qfuncs.sh
+
+set -e
+
+cd "$(dirname "$0")" || die
+. bin/activate
+python3 gen_font_variants.py "$@"

@@ -3,6 +3,7 @@ import fontforge
 import os
 import sys
 
+bold_weight = 30
 
 def generate_bold_sfd(input_path):
     # Check if the input file exists
@@ -46,7 +47,7 @@ def generate_bold_sfd(input_path):
             if glyph.isWorthOutputting():
                 try:
                     glyph.correctDirection()  # Correct spline directions
-                    glyph.changeWeight(100)  # Apply weight change
+                    glyph.changeWeight(bold_weight)  # Apply weight change
                     print(f"Processed glyph: {glyph.glyphname}")
                 except Exception as e:
                     print(f"Error processing glyph '{glyph.glyphname}': {e}")
