@@ -3,7 +3,7 @@ import fontforge
 import os
 import sys
 
-bold_weight = 30
+bold_weight = 15
 
 def generate_bold_sfd(input_path):
     # Check if the input file exists
@@ -57,8 +57,8 @@ def generate_bold_sfd(input_path):
         print(f"Bold SFD file generated: {output_sfd}")
 
         # Optionally generate a TTF for inspection
-        font.generate(output_ttf)
-        print(f"Bold TTF file generated: {output_ttf}")
+        # font.generate(output_ttf)
+        # print(f"Bold TTF file generated: {output_ttf}")
 
         font.close()
     except Exception as e:
