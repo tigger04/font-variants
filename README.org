@@ -1,8 +1,6 @@
 #+TITLE: Font Variant Generator
-#+AUTHOR: Your Name
+#+AUTHOR: Taḋg O'Brien
 #+DATE: [2024-01-24 Wed]
-
-* Font Variant Generator
 
 Generate bold variants of font files using FontForge. This tool creates bold versions
 of fonts while maintaining their core characteristics and allowing customization of
