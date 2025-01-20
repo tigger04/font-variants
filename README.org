@@ -1,8 +1,101 @@
-#+TITLE: Generate Font variants automatically
+#+TITLE: Font Variant Generator
+#+AUTHOR: Your Name
+#+DATE: [2024-01-24 Wed]
 
-Generate Font variants automatically
-- bold
-- italic
-- bold italic
+* Font Variant Generator
 
+Generate bold variants of font files using FontForge. This tool creates bold versions
+of fonts while maintaining their core characteristics and allowing customization of
+the bold weight.
 
+* Rationale
+Near impossibility of generating bold font variants in the GUI version of FontForge
+without crashing these days. This script tries to catch and workaround some of the
+issues. YMMV.
+
+* Installation
+Clone or download this repository.
+
+** Prerequisites
+
+- *FontForge*
+  Note: On MacOS make sure you install FontForge as a *cask* and not just the
+  CLI formula, as the latter doesn't include the Python interpreter needed for
+  this script.
+- FontForge libraries (MacOS execution described here uses FontForge's Python interpreter)
+- pipenv: [[https://pypi.org/project/pipenv/][pipenv]]
+
+Note the Pipfile in this repo references the MacOS FontForge Python interpreter,
+as it's near impossible to pull in the FontForge package via PyPI and get it
+running on this platform. I hear it's running more flexibly on other platforms,
+be my guest, YMMV.
+
+*** MacOS pipenv install
+#+begin_src sh
+brew install --cask fontforge # if you don't already have it
+brew install pipenv
+#+end_src
+
+** Virtual Environment
+
+*** Set up virtual environment
+#+begin_src sh
+pipenv install
+#+end_src
+
+* Usage
+
+** Basic usage:
+#+begin_src sh
+python gen-font-variants.py input.sfd
+#+end_src
+
+** With options:
+#+begin_src sh
+python gen-font-variants.py input.sfd --weight 20 --output-dir /path/to/output --force
+#+end_src
+
+*** Command Line Arguments
+
+| Argument           | Description                                        | Default            |
+|-------------------+----------------------------------------------------+-------------------|
+| input_file        | Path to the input font file (supports SFD format)  | Required          |
+| -w, --weight      | Bold weight value to apply                         | 15                |
+| -o, --output-dir  | Output directory for generated files               | Input file's dir  |
+| -f, --force       | Force overwrite of existing output files           | False             |
+| -h, --help        | Show help message and exit                         | N/A               |
+
+** Output
+
+The script generates:
+- An SFD file with "-bold" suffix
+- (Optionally) a TTF file with "-bold" suffix
+
+** Features
+
+- Customizable bold weight
+- Output directory specification
+- Overwrite protection
+- Automatic metadata updates for bold variant
+- Glyph-by-glyph processing
+- Validation and repair of font data
+
+** Error Handling
+
+The script includes comprehensive error handling:
+- Checks for existing output files
+- Validates input file existence
+- Creates output directory if needed
+- Reports processing errors for individual glyphs
+
+** Roadmap
+*** TODO Generate italic variants
+*** TODO Generate bold-italic variants
+
+** License
+
+MIT
+
+** Contributing
+
+Feel free to contribute to this project by submitting issues or pull requests.
