@@ -47,12 +47,12 @@ pipenv shell
 
 ** Basic usage:
 #+begin_src sh
-pipenv run python gen-font-variants.py tigger.sfd
+pipenv run gen-font-variants.py tigger.sfd
 #+end_src
 
 ** With options:
 #+begin_src sh
-pipenv python gen-font-variants.py tigger.sfd --weight 20 --output-dir /path/to/output --force
+pipenv run gen-font-variants.py tigger.sfd --weight 20 --output-dir /path/to/output --force
 #+end_src
 
 *** Command Line Arguments
