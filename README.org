@@ -92,7 +92,11 @@ The script includes comprehensive error handling:
 
 ** License
 
+*** This code
 MIT
+
+*** Referenced fonts at [[https://github.com/tigger04/tigger-fonts][tigger04/tigger-fonts]]
+SIL Open Font License v1.1 
 
 ** Contributing
 
