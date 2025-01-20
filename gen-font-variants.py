@@ -38,7 +38,7 @@ def check_output_paths(input_path, output_dir=None, overwrite=False):
     return output_sfd, output_ttf
 
 
-def generate_bold_sfd(input_path, bold_weight=defaults.bold_weight, output_dir=None, force=False):
+def generate_bold_sfd(input_path, bold_weight=defaults["bold_weight"], output_dir=None, force=False):
     # Check if the input file exists
     if not os.path.isfile(input_path):
         print(f"Error: File '{input_path}' not found.")

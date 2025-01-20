@@ -1,0 +1,20 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "ffb0fd80a23e81a3179071c64a1b93f47dfe39272b135b722b918619218adeb6"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_path": "/Applications/FontForge.app/Contents/MacOS/FFPython"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {},
+    "develop": {}
+}
