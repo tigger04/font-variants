@@ -1,0 +1,3 @@
+[submodule "font-variants"]
+	path = font-variants
+	url = git@github.com:tigger04/font-variants.git
