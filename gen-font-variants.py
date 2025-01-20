@@ -83,7 +83,18 @@ def time_limit(seconds):
         signal.alarm(0)
 
 
-def generate_bold_sfd(input_path, bold_weight=10, output_dir=None, force=False):
+def process_font(
+    input_path,
+    variant_type="bold",
+    weight=10,
+    italic_angle=26,
+    output_dir=None,
+    force=False,
+):
+    """
+    Process font to create bold, italic, or bold-italic variant
+    variant_type can be "bold", "italic", or "bold-italic"
+    """
     print(f"Opening font file: {input_path}")
     try:
         font = fontforge.open(input_path)
@@ -92,11 +103,21 @@ def generate_bold_sfd(input_path, bold_weight=10, output_dir=None, force=False):
         return False
 
     print("Processing font metadata...")
-    font.fontname = font.fontname + "-Bold"
-    font.fullname = font.fullname + " Bold"
-    font.weight = "Bold"
+    if variant_type == "bold-italic":
+        font.fontname = font.fontname + "-BoldItalic"
+        font.fullname = font.fullname + " Bold Italic"
+        font.weight = "Bold"
+        font.italicangle = italic_angle
+    else:
+        variant_name = variant_type.capitalize()
+        font.fontname = font.fontname + f"-{variant_name}"
+        font.fullname = font.fullname + f" {variant_name}"
+        if variant_type == "bold":
+            font.weight = "Bold"
+        elif variant_type == "italic":
+            font.italicangle = italic_angle
 
-    print(f"Applying bold weight of {bold_weight}...")
+    print(f"Applying {variant_type} transformation...")
     try:
         total_glyphs = len(list(font.glyphs()))
         skipped_refs = 0
@@ -133,11 +154,17 @@ def generate_bold_sfd(input_path, bold_weight=10, output_dir=None, force=False):
                     skipped_refs += 1
                     continue
 
-                # Apply weight change with timeout
+                # Apply transformation with timeout
                 try:
                     with time_limit(5):
                         start_time = time.time()
-                        glyph.changeWeight(bold_weight)
+
+                        if variant_type in ["bold", "bold-italic"]:
+                            glyph.changeWeight(weight)
+
+                        if variant_type in ["italic", "bold-italic"]:
+                            glyph.italicize(italic_angle)
+
                         end_time = time.time()
                         print(
                             f"Processed {glyph.glyphname} in {end_time - start_time:.2f} seconds"
@@ -162,14 +189,14 @@ def generate_bold_sfd(input_path, bold_weight=10, output_dir=None, force=False):
         print(f"- Skipped (Google Drive): {skipped_excluded['google_drive']} glyphs")
 
     except Exception as e:
-        print(f"Error during bold generation: {e}")
+        print(f"Error during {variant_type} generation: {e}")
         return False
 
     if output_dir is None:
         output_dir = os.path.dirname(input_path) or "."
 
     base_name = os.path.splitext(os.path.basename(input_path))[0]
-    output_path = os.path.join(output_dir, f"{base_name}-bold.sfd")
+    output_path = os.path.join(output_dir, f"{base_name}-{variant_type}.sfd")
 
     if os.path.exists(output_path) and not force:
         print(
@@ -180,7 +207,7 @@ def generate_bold_sfd(input_path, bold_weight=10, output_dir=None, force=False):
     print(f"Saving to: {output_path}")
     try:
         font.save(output_path)
-        print("Bold variant generated successfully!")
+        print(f"{variant_type.capitalize()} variant generated successfully!")
         return True
     except Exception as e:
         print(f"Error saving font: {e}")
@@ -189,11 +216,25 @@ def generate_bold_sfd(input_path, bold_weight=10, output_dir=None, force=False):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate a bold variant of a font file."
+        description="Generate bold, italic, or bold-italic variants of a font file."
     )
     parser.add_argument("input_file", help="Path to the input font file")
     parser.add_argument(
+        "--variant",
+        "-v",
+        choices=["bold", "italic", "bold-italic", "all"],
+        default="all",
+        help="Variant to generate (default: all)",
+    )
+    parser.add_argument(
         "--weight", "-w", type=float, default=10, help="Bold weight value (default: 10)"
+    )
+    parser.add_argument(
+        "--italic-angle",
+        "-i",
+        type=float,
+        default=-13,
+        help="Italic angle in degrees (default: -13)",
     )
     parser.add_argument(
         "--output-dir", "-o", help="Output directory (default: same as input file)"
@@ -218,9 +259,25 @@ def main():
             print(f"Error creating output directory: {e}")
             sys.exit(1)
 
-    success = generate_bold_sfd(
-        args.input_file, args.weight, args.output_dir, args.force
-    )
+    success = True
+    variants_to_process = []
+
+    if args.variant == "all":
+        variants_to_process = ["bold", "italic", "bold-italic"]
+    else:
+        variants_to_process = [args.variant]
+
+    for variant in variants_to_process:
+        print(f"\nProcessing {variant} variant...")
+        success &= process_font(
+            args.input_file,
+            variant,
+            args.weight,
+            args.italic_angle,
+            args.output_dir,
+            args.force,
+        )
+
     sys.exit(0 if success else 1)
 
 
