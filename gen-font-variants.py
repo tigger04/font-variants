@@ -87,7 +87,7 @@ def process_font(
     input_path,
     variant_type="bold",
     weight=10,
-    italic_angle=26,
+    italic_angle=13,
     output_dir=None,
     force=False,
 ):
@@ -163,7 +163,20 @@ def process_font(
                             glyph.changeWeight(weight)
 
                         if variant_type in ["italic", "bold-italic"]:
-                            glyph.italicize(italic_angle)
+                            # Make sure italic_angle is positive
+                            italic_angle = abs(italic_angle)
+                            font.italicangle = -italic_angle  # Font metadata uses negative angle
+                            
+                            # Transform each glyph
+                            for glyph in font.glyphs():
+                                if glyph.isWorthOutputting():
+                                    try:
+                                        glyph.transform((1, italic_angle/100, 0, 1, 0, 0))
+                                        # Or alternatively:
+                                        # glyph.italicize(italic_angle)
+                                    except Exception as e:
+                                        print(f"Failed to italicize glyph {glyph.glyphname}: {e}")
+
 
                         end_time = time.time()
                         print(

@@ -9,5 +9,5 @@ set -e
 real_path="$(realpath "$0")"
 real_dir="$(dirname "$real_path")"
 cd "$real_dir" || die
-"$real_dir"/bin/activate
+# "$real_dir"/bin/activate
 /Applications/FontForge.app/Contents/MacOS/FFPython "$real_dir"/gen-font-variants.py "$@"
