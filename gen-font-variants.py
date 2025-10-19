@@ -87,7 +87,7 @@ def process_font(
     input_path,
     variant_type="bold",
     weight=10,
-    italic_angle=13,
+    italic_angle=-13,
     output_dir=None,
     force=False,
 ):
@@ -107,7 +107,7 @@ def process_font(
         font.fontname = font.fontname + "-BoldItalic"
         font.fullname = font.fullname + " Bold Italic"
         font.weight = "Bold"
-        font.italicangle = italic_angle
+        font.italicangle = -abs(italic_angle)  # Italic angle should be negative in font metadata
     else:
         variant_name = variant_type.capitalize()
         font.fontname = font.fontname + f"-{variant_name}"
@@ -115,7 +115,7 @@ def process_font(
         if variant_type == "bold":
             font.weight = "Bold"
         elif variant_type == "italic":
-            font.italicangle = italic_angle
+            font.italicangle = -abs(italic_angle)  # Italic angle should be negative in font metadata
 
     print(f"Applying {variant_type} transformation...")
     try:
@@ -163,19 +163,16 @@ def process_font(
                             glyph.changeWeight(weight)
 
                         if variant_type in ["italic", "bold-italic"]:
-                            # Make sure italic_angle is positive
-                            italic_angle = abs(italic_angle)
-                            font.italicangle = -italic_angle  # Font metadata uses negative angle
-                            
-                            # Transform each glyph
-                            for glyph in font.glyphs():
-                                if glyph.isWorthOutputting():
-                                    try:
-                                        glyph.transform((1, italic_angle/100, 0, 1, 0, 0))
-                                        # Or alternatively:
-                                        # glyph.italicize(italic_angle)
-                                    except Exception as e:
-                                        print(f"Failed to italicize glyph {glyph.glyphname}: {e}")
+                            # Apply italic transformation to the current glyph only
+                            try:
+                                # Use proper italic skew transformation
+                                # Convert angle to radians and use tan() for correct skew
+                                import math
+                                angle_rad = math.radians(abs(italic_angle))
+                                skew_factor = math.tan(angle_rad)
+                                glyph.transform((1, skew_factor, 0, 1, 0, 0))
+                            except Exception as e:
+                                print(f"Failed to italicize glyph {glyph.glyphname}: {e}")
 
 
                         end_time = time.time()
